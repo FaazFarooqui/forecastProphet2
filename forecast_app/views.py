@@ -1,4 +1,5 @@
 # forecast_app/views.py
+
 import os
 import io
 import pandas as pd
@@ -17,6 +18,27 @@ def parse_dates(date_str):
     except ValueError:
         return None
     
+def load_and_preprocess_data(data_file_path, ds_col, y_col, dataset_choice):
+    """Load and preprocess the data."""
+    # Load the data
+    df = pd.read_csv(data_file_path, encoding='ISO-8859-1')
+    df['ds'] = df[ds_col].apply(parse_dates)
+    
+    # Handle different formats for the 'y' column
+    if dataset_choice == 'stock':
+        df['y'] = df[y_col].str.replace('[\$,]', '', regex=True).astype(float)
+    else:
+        df['y'] = df[y_col].astype(float)
+    
+    # Handle missing values
+    df = df.dropna(subset=['ds', 'y'])
+    
+    # Normalize the 'y' values
+    scaler = MinMaxScaler()
+    df['y'] = scaler.fit_transform(df[['y']])
+    
+    return df, scaler
+
 def forecast_view(request):
     xlabel_val, ylabel_val, title_label, ds_col, y_col  = '', '', '', '', ''
     if request.method == 'POST':
@@ -39,29 +61,13 @@ def forecast_view(request):
             else:
                 raise ValueError("Invalid dataset choice")
 
-            # # Construct absolute path to the data file
-            # data_file_path = os.path.join(settings.BASE_DIR, 'sales_forecasting', 'data', 'sales_data_sample.csv')
-
             # Check if the file exists
             if not os.path.exists(data_file_path):
                 raise FileNotFoundError(f"The data file was not found: {data_file_path}")
             
-            # Load your historical data
-            df = pd.read_csv(data_file_path, encoding='ISO-8859-1')   # Use the absolute path
-            df['ds'] = df[ds_col].apply(parse_dates)
-            if dataset_choice == 'stock':                
-                df['y'] = df[y_col].str.replace('[\$,]', '', regex=True).astype(float)  # Remove '$' and convert to float
-            else:
-                df['y'] = df[y_col].astype(float)
-
+            # Load and preprocess the data
+            df, scaler = load_and_preprocess_data(data_file_path, ds_col, y_col, dataset_choice)
             
-            # Handle missing values
-            df = df.dropna(subset=['ds', 'y'])  # Drop rows with missing 'ds' or 'y' values
-            
-            # Normalize the 'y' values
-            scaler = MinMaxScaler()
-            df['y'] = scaler.fit_transform(df[['y']])
-
             # Fit the Prophet model
             model = Prophet()
             model.fit(df)

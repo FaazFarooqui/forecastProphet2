@@ -39,3 +39,14 @@ python manage.py migrate
 python manage.py runserver
 5.  Navigate to Url to run the application
 http://127.0.0.1:8000/forecast/
+
+#	Code quality and organization
+1.  Consistent Indentation: Ensure consistent indentation throughout the file.
+2.  Remove Unnecessary Comments: Remove commented-out code that is not needed.
+3.  Use Functions for Repeated Code: Extract repeated code into functions to avoid redundancy.
+4.  Add Comments and Docstrings: Add comments and docstrings to explain the purpose of the code.
+5.  Organize Imports: Ensure imports are organized and grouped logically.
+Consistent Indentation: Ensured consistent indentation throughout the file.
+Add Comments and Docstrings: Added a docstring to explain the purpose of the ForecastForm class.
+Organize Imports: Ensured imports are organized and grouped logically.
+Add help_text: Added help_text to provide additional information for form fields.

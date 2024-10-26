@@ -1,8 +1,37 @@
 <!-- templates/forecast.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sales Forecast</title>
+    <style>
+        /* Add some basic styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
 </head>
 <body>
     <h1>Sales Forecast</h1>
@@ -12,21 +41,25 @@
         <button type="submit">Generate Forecast</button>
     </form>
     
+    <!-- Display historical data trends -->
     {% if historical_data_image %}
         <h2>Historical Data Trends</h2>
         <img src="data:image/png;base64,{{ historical_data_image }}" alt="Historical Data Trends">
     {% endif %}
     
+     <!-- Display forecasted values with confidence intervals -->
     {% if forecast_image %}
         <h2>Forecasted Values with Confidence Intervals</h2>
         <img src="data:image/png;base64,{{ forecast_image }}" alt="Forecast Plot">
     {% endif %}
     
+    <!-- Display comparison between actual and forecasted values -->
     {% if comparison_image %}
         <h2>Comparison between Actual and Forecasted Values</h2>
         <img src="data:image/png;base64,{{ comparison_image }}" alt="Comparison Plot">
     {% endif %}
     
+    <!-- Display forecast data in a table -->
     {% if forecast_data %}
         <h3>Forecast Data</h3>
         {{ forecast_data|safe }}
