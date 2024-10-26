@@ -10,12 +10,35 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            text-align: center;
         }
-        h1, h2 {
+        h1, h2, h3 {
             color: #333;
         }
         form {
             margin-bottom: 20px;
+            display: inline-block;
+            text-align: left;
+        }
+        .form-field {
+            margin-bottom: 10px;
+        }
+        .form-field label {
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .form-field input[type="text"], .form-field select {
+            width: calc(100% - 120px); /* Adjust width to fit the label and input on the same line */
+            padding: 8px;
+            box-sizing: border-box;
+            display: inline-block;
+        }
+        .form-field input[type="radio"] {
+            margin-right: 5px;
+        }
+        .required-note {
+            color: red;
+            font-size: 0.9em;
         }
         button {
             padding: 10px 20px;
@@ -31,15 +54,40 @@
             max-width: 100%;
             height: auto;
         }
+        .metrics {
+            margin-top: 20px;
+        }
+        .metrics h3 {
+            margin-bottom: 10px;
+        }
+        .metrics p {
+            margin: 5px 0;
+        }
+        .content {
+            display: inline-block;
+            text-align: left;
+            width: 80%;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
     <h1>Sales Forecast</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Generate Forecast</button>
-    </form>
+    <div class="content">
+        <!-- Form for generating forecast -->
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-field">
+                {{ form.forecast_horizon.label_tag }}<span style="color: red;">*</span>
+                {{ form.forecast_horizon }}
+            </div>
+            <div class="form-field">
+                {{ form.dataset_choice.label_tag }}<span style="color: red;">*</span>
+                {{ form.dataset_choice }}
+            </div>
+            <button type="submit">Generate Forecast</button>
+            <p class="required-note">Fields marked with * are required.</p>
+        </form>
     
     <!-- Display historical data trends -->
     {% if historical_data_image %}
@@ -58,11 +106,23 @@
         <h2>Comparison between Actual and Forecasted Values</h2>
         <img src="data:image/png;base64,{{ comparison_image }}" alt="Comparison Plot">
     {% endif %}
-    
+
+    <!-- Display evaluation metrics -->
+    {% if mse and rmse and mae and r2 %}
+        <div class="metrics">
+            <h3>Model Evaluation Metrics</h3>
+            <p><strong>MSE:</strong> {{ mse }}</p>
+            <p><strong>RMSE:</strong> {{ rmse }}</p>
+            <p><strong>MAE:</strong> {{ mae }}</p>
+            <p><strong>R-squared:</strong> {{ r2 }}</p>
+        </div>
+    {% endif %}
+
     <!-- Display forecast data in a table -->
     {% if forecast_data %}
         <h3>Forecast Data</h3>
         {{ forecast_data|safe }}
     {% endif %}
+    </div>
 </body>
 </html>

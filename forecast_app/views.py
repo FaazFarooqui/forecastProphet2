@@ -10,7 +10,10 @@ from .forms import ForecastForm
 from prophet import Prophet
 import base64
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from dateutil import parser
+import numpy as np
 
 def parse_dates(date_str):
     try:
@@ -68,17 +71,28 @@ def forecast_view(request):
             # Load and preprocess the data
             df, scaler = load_and_preprocess_data(data_file_path, ds_col, y_col, dataset_choice)
             
+            # Split the data into training and testing sets
+            train_df, test_df = train_test_split(df, test_size=0.3, shuffle=False)
+
             # Fit the Prophet model
             model = Prophet()
-            model.fit(df)
+            model.fit(train_df)
             
             # Make future dataframe
-            future = model.make_future_dataframe(periods=forecast_horizon)
+            future = model.make_future_dataframe(periods=len(test_df))
             forecast = model.predict(future)
             
             # Inverse transform the forecasted 'y' values to original scale
             forecast[['yhat', 'yhat_lower', 'yhat_upper']] = scaler.inverse_transform(forecast[['yhat', 'yhat_lower', 'yhat_upper']])
+            test_df['y'] = scaler.inverse_transform(test_df[['y']])
 
+            # Evaluate the model
+            y_true = test_df['y'].values
+            y_pred = forecast['yhat'].values[-len(test_df):]
+            mse = mean_squared_error(y_true, y_pred)
+            rmse = np.sqrt(mse)
+            mae = mean_absolute_error(y_true, y_pred)
+            r2 = r2_score(y_true, y_pred)
 
             # Plot the historical data
             fig, ax = plt.subplots(figsize=(10, 6))
@@ -109,8 +123,8 @@ def forecast_view(request):
             ax.plot(df['ds'], scaler.inverse_transform(df[['y']]), label='Actual')
             ax.plot(forecast['ds'], forecast['yhat'], label='Forecast')
             ax.fill_between(forecast['ds'], forecast['yhat_lower'], forecast['yhat_upper'], color='gray', alpha=0.2)
-            ax.set_xlabel('Time')
-            ax.set_ylabel('Sales')
+            ax.set_xlabel(xlabel_val)
+            ax.set_ylabel(ylabel_val)
             plt.title('Comparison between Actual and Forecasted Values')
             plt.legend()
             buf = io.BytesIO()
@@ -124,7 +138,11 @@ def forecast_view(request):
                 'historical_data_image': historical_data_image,
                 'forecast_image': forecast_image,
                 'comparison_image': comparison_image,
-                'forecast_data': forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].to_html()
+                'forecast_data': forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].to_html(),
+                'mse': mse,
+                'rmse': rmse,
+                'mae': mae,
+                'r2': r2,
             })
     else:
         form = ForecastForm()
