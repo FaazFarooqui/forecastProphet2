@@ -1,10 +1,14 @@
 ##  Running the Application:
-1.  Navigate to the correct application folder
-cd sales_forecasting
+0.  Install the python and pip on the system.
+Python 3.10.13
+pip 24.2 
+git bash
+1.  Navigate to the correct project/application folder
+cd forecast
 2.   Create the virtual environment
 python -m venv myenv
 3.  Activate the local virtual environment
-forecast-env\Scripts\activate
+myenv\Scripts\activate
 4.  Install the dependencies from the requirements.txt file
 pip install -r requirements.txt
 5.  Perform migration:
@@ -13,6 +17,7 @@ python manage.py migrate
 python manage.py runserver
 7.  Navigate to Url to run the application
 http://127.0.0.1:8000/forecast/
+
 
 ## Chosen dataset and the forecasting model used:
 1.  Source: The dataset is sourced from Kaggle, a popular platform for data science and machine learning datasets.
@@ -24,37 +29,71 @@ http://127.0.0.1:8000/forecast/
 4.  Preprocessing: The dataset is preprocessed to handle missing values, outliers, and normalization. This ensures that the data is clean and suitable for accurate forecasting.
 5.  Renaming and Adjustments: The dataset has been renamed, and the columns used have been adjusted to fit the requirements of this project.
 
+
 ##  Reasons for Selecting the Prophet Model
 1.  Ease of Use:
 Prophet is designed to be easy to use for both experts and non-experts in time series forecasting.
 It provides a simple interface for fitting and predicting time series data.
-
 2.  Handling Missing Data:
 Prophet can handle missing data and outliers effectively, making it robust for real-world datasets.
-
 3.  Automatic Seasonality Detection:
 Prophet automatically detects and models daily, weekly, and yearly seasonality.
 It allows for custom seasonalities to be added if needed.
-
 4.  Flexibility:
 Prophet allows for the inclusion of holidays and special events, which can significantly impact the forecast.
 It supports custom seasonalities and changepoints, providing flexibility in modeling complex time series.
-
 5.  Scalability:
 Prophet is scalable and can handle large datasets efficiently.
 It is designed to work well with both short and long time series data.
-
 6.  Interpretability:
 The model provides interpretable parameters, making it easier to understand the underlying patterns in the data.
 It offers clear visualizations of the forecast components (trend, seasonality, holidays).
-
 7.  Robustness:
 Prophet is robust to missing data and shifts in the trend, making it suitable for various types of time series data.
 It can handle outliers and anomalies in the data without significant impact on the forecast.
-
 8.  Open Source and Well-Maintained:
 Prophet is an open-source library developed and maintained by Facebook.
 It has a strong community and extensive documentation, making it a reliable choice for time series forecasting.
+
+
+##  Selection of Forecasting Model Based on Dataset
+1.	Daily Sales Data for a Retail Store:
+o	Characteristics:
+	High frequency (daily data).
+	Potential for strong seasonality (weekly, monthly, yearly).
+	Possible presence of holidays and special events affecting sales.
+o	Recommended Models:
+	Prophet:
+	Reason: Prophet is well-suited for handling daily data with multiple seasonalities and holidays. It automatically detects and models daily, weekly, and yearly seasonality.
+	ARIMA:
+	Reason: ARIMA can be effective for time series data with strong autocorrelation. It is suitable for data with a clear trend and seasonality.
+	LSTM:
+	Reason: LSTM can capture complex patterns and dependencies in the data. It is useful for modeling non-linear relationships and long-term dependencies.
+2.	Monthly Average Temperatures:
+o	Characteristics:
+	Lower frequency (monthly data).
+	Strong yearly seasonality.
+	Potential for long-term trends due to climate change.
+o	Recommended Models:
+	Prophet:
+	Reason: Prophet is effective for handling yearly seasonality and long-term trends. It can model the yearly cycle of temperature changes.
+	ARIMA:
+	Reason: ARIMA can be used for time series data with strong autocorrelation and seasonality. It is suitable for modeling the monthly temperature data.
+	LSTM:
+	Reason: LSTM can capture complex patterns and dependencies in the data. It is useful for modeling non-linear relationships and long-term trends.
+3.	Historical Stock Prices for a Specific Company:
+o	Characteristics:
+	High frequency (daily data).
+	Potential for high volatility and noise.
+	Influence of external factors (market trends, economic indicators).
+o	Recommended Models:
+	LSTM:
+	Reason: LSTM is well-suited for capturing complex patterns and dependencies in financial data. It can model non-linear relationships and long-term dependencies.
+	ARIMA:
+	Reason: ARIMA can be effective for time series data with strong autocorrelation. It is suitable for modeling the trend and seasonality in stock prices.
+	Prophet:
+	Reason: Prophet can handle daily data with multiple seasonalities. It is useful for modeling long-term trends and seasonality in stock prices.
+
 
 ##  Forecasted Values with Confidence Intervals
 1.  Definition:
@@ -109,6 +148,7 @@ views.py: Contains the view logic for handling form submission and generating fo
 forecast.html: Template for displaying the form and forecast results.
 urls.py: Contains URL routing for the forecast view.
 
+
 ##   Commonly Used Metrics for Time Series Forecasting
 1.  Mean Squared Error (MSE):
 -   Definition: The average of the squared differences between the actual and predicted values.
@@ -134,6 +174,7 @@ urls.py: Contains URL routing for the forecast view.
 -   MSE and RMSE: These metrics are useful when you want to penalize larger errors more heavily. RMSE is particularly useful when you want the error metric to be in the same units as the original data.
 -   MAE: This metric is useful when you want to understand the average magnitude of the errors without considering their direction. It is less sensitive to outliers compared to MSE and RMSE.
 -   R-squared: This metric is useful when you want to understand how well the model explains the variability in the data. It provides a measure of the goodness of fit of the model.
+
 
 #	Code quality and organization
 1.  Consistent Indentation: Ensure consistent indentation throughout the file.
