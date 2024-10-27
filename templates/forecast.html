@@ -118,10 +118,18 @@
         </div>
     {% endif %}
 
+    
     <!-- Display forecast data in a table -->
     {% if forecast_data %}
         <h3>Forecast Data</h3>
         {{ forecast_data|safe }}
+        <div class="legend">
+            <h4>Legend</h4>
+            <p style="margin: 2px 0;"><strong>ds:</strong> Date</p>
+            <p style="margin: 2px 0;"><strong>yhat:</strong> Predicted Value</p>
+            <p style="margin: 2px 0;"><strong>yhat_lower:</strong> Lower Bound of Prediction Interval</p>
+            <p style="margin: 2px 0;"><strong>yhat_upper:</strong> Upper Bound of Prediction Interval</p>
+        </div>
     {% endif %}
     </div>
 </body>
