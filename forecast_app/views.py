@@ -74,12 +74,35 @@ def forecast_view(request):
             # Split the data into training and testing sets
             train_df, test_df = train_test_split(df, test_size=0.3, shuffle=False)
 
+            # Data Preprocessing
+            # Handle missing values
+            train_df = train_df.dropna()
+            test_df = test_df.dropna()
+
+            # Initialize the scaler
+            scaler = MinMaxScaler()
+
+            # Fit and transform the training data
+            train_df[['y']] = scaler.fit_transform(train_df[['y']])
+
+            # Transform the test data
+            test_df[['y']] = scaler.transform(test_df[['y']])
+            
             # Fit the Prophet model
-            model = Prophet()
+            # Initialize the model with tuned hyperparameters
+            model = Prophet(
+            changepoint_prior_scale=0.05,  # Adjust this value
+            seasonality_prior_scale=10.0,  # Adjust this value
+            holidays_prior_scale=10.0      # Adjust this value
+            )
+
+            # Fit the model
             model.fit(train_df)
             
             # Make future dataframe
             future = model.make_future_dataframe(periods=len(test_df))
+            
+            # Predict
             forecast = model.predict(future)
             
             # Inverse transform the forecasted 'y' values to original scale
@@ -88,11 +111,17 @@ def forecast_view(request):
 
             # Evaluate the model
             y_true = test_df['y'].values
-            y_pred = forecast['yhat'].values[-len(test_df):]
+            y_pred = forecast['yhat'].values[:len(y_true)]
+
             mse = mean_squared_error(y_true, y_pred)
-            rmse = np.sqrt(mse)
+            rmse = mse ** 0.5
             mae = mean_absolute_error(y_true, y_pred)
             r2 = r2_score(y_true, y_pred)
+
+            print(f'MSE: {mse}')
+            print(f'RMSE: {rmse}')
+            print(f'MAE: {mae}')
+            print(f'R-squared: {r2}')
 
             # Plot the historical data
             fig, ax = plt.subplots(figsize=(10, 6))
