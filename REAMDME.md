@@ -4,7 +4,7 @@ Python 3.10.13
 pip 24.2 
 git bash
 1.  Navigate to the correct project/application folder
-cd forecast
+cd forecastProphet2
 2.   Create the virtual environment
 python -m venv myenv
 3.  Activate the local virtual environment
