@@ -11,11 +11,9 @@ python -m venv myenv
 myenv\Scripts\activate
 4.  Install the dependencies from the requirements.txt file
 pip install -r requirements.txt
-5.  Perform migration:
-python manage.py migrate
-6.  Run the server
+5.  Run the server
 python manage.py runserver
-7.  Navigate to Url to run the application
+6.  Navigate to Url to run the application
 http://127.0.0.1:8000/forecast/
 
 
